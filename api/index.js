@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
   const baseURL = "https://script.google.com/macros/s/AKfycbymvlZV1ffXO9w_Q71Rn4LW8b8kVdFsXhs8gdSdwMDtNxwGKhS8_ECMBpp8oaZXAdY/exec";
 
-  const queryString = req.url.split("?")[1] || "";
+  const queryString = req.url.split('?')[1] || '';
   const url = `${baseURL}?${queryString}`;
 
   const fetchOptions = {
@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   };
 
   if (req.method === "POST") {
-    fetchOptions.body = await req.text();
+    fetchOptions.body = new URLSearchParams(await req.text());
     fetchOptions.headers = {
       "Content-Type": "application/x-www-form-urlencoded",
     };
@@ -19,8 +19,9 @@ export default async function handler(req, res) {
     const response = await fetch(url, fetchOptions);
     const text = await response.text();
 
+    // 🔥 Cabeçalhos CORS
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
     if (req.method === "OPTIONS") {
@@ -29,7 +30,8 @@ export default async function handler(req, res) {
     }
 
     res.status(200).send(text);
-  } catch (error) {
-    res.status(500).send("Erro ao acessar a API do Google Apps Script.");
+  } catch (e) {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.status(500).send("Erro no proxy: " + e.message);
   }
 }
