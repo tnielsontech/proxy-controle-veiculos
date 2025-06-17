@@ -8,30 +8,37 @@ export default async function handler(req, res) {
     method: req.method,
   };
 
-  if (req.method === "POST") {
-    fetchOptions.body = new URLSearchParams(await req.text());
+  if (req.method === 'POST') {
+    const body = await req.text();
+    fetchOptions.body = body;
     fetchOptions.headers = {
-      "Content-Type": "application/x-www-form-urlencoded",
+      'Content-Type': 'application/x-www-form-urlencoded',
     };
+  }
+
+  // 🔥 Trata preflight OPTIONS (resolver CORS)
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.status(200).end();
+    return;
   }
 
   try {
     const response = await fetch(url, fetchOptions);
-    const text = await response.text();
+    const data = await response.text();
 
-    // 🔥 Cabeçalhos CORS
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (req.method === "OPTIONS") {
-      res.status(200).end();
-      return;
-    }
+    res.status(200).send(data);
+  } catch (error) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    res.status(200).send(text);
-  } catch (e) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.status(500).send("Erro no proxy: " + e.message);
+    res.status(500).send('Erro no proxy: ' + error.toString());
   }
 }
