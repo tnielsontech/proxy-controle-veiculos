@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const baseURL = "https://script.google.com/macros/s/AKfycbymvlZV1ffXO9w_Q71Rn4LW8b8kVdFsXhs8gdSdwMDtNxwGKhS8_ECMBpp8oaZXAdY/exec";
+  const baseURL = "https://script.google.com/macros/s/AKfycbwW97PtGlaQXEf3o30BYW3kYG9qzlSPFjxCeZ29au609EJeb7-W9tEiINk8KiM9XqA/exec";
 
   if (req.method === "GET") {
     try {
@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
   if (req.method === "POST") {
     try {
-      const body = await req.json();
+      const body = await req.body;
 
       const params = new URLSearchParams();
       for (const key in body) {
