@@ -1,6 +1,7 @@
 export default async function handler(req, res) {
   const baseURL = "https://script.google.com/macros/s/AKfycbymvlZV1ffXO9w_Q71Rn4LW8b8kVdFsXhs8gdSdwMDtNxwGKhS8_ECMBpp8oaZXAdY/exec";
-  const queryString = req.url.split('?')[1] || '';
+
+  const queryString = req.url.split("?")[1] || "";
   const url = `${baseURL}?${queryString}`;
 
   const fetchOptions = {
@@ -8,7 +9,7 @@ export default async function handler(req, res) {
   };
 
   if (req.method === "POST") {
-    fetchOptions.body = new URLSearchParams(await req.text());
+    fetchOptions.body = await req.text();
     fetchOptions.headers = {
       "Content-Type": "application/x-www-form-urlencoded",
     };
@@ -22,8 +23,13 @@ export default async function handler(req, res) {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
+    if (req.method === "OPTIONS") {
+      res.status(200).end();
+      return;
+    }
+
     res.status(200).send(text);
   } catch (error) {
-    res.status(500).send("Erro no Proxy: " + error.toString());
+    res.status(500).send("Erro ao acessar a API do Google Apps Script.");
   }
 }
