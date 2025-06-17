@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const url = "https://script.google.com/macros/s/AKfycbymvlZV1ffXO9w_Q71Rn4LW8b8kVdFsXhs8gdSdwMDtNxwGKhS8_ECMBpp8oaZXAdY/exec" 
+  const url = "https://script.google.com/macros/s/AKfycbymvlZV1ffXO9w_Q71Rn4LW8b8kVdFsXhs8gdSdwMDtNxwGKhS8_ECMBpp8oaZXAdY/exec"
     + (req.url.includes("?") ? req.url.substring(req.url.indexOf("?")) : "");
 
   try {
